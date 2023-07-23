@@ -9,3 +9,4 @@ edition = "2021"
 anyhow = "1.0.71"
 clap = { version = "4.3.11", features = ["derive"] }
 colored = "2.0.4"
+tracing-appender = "0.2.2"

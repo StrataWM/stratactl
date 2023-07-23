@@ -14,14 +14,17 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-	Launch(LaunchArgs),
-	Quit(QuitArgs),
+	SwitchToWorkspace(WorkspaceArgs),
+	MoveWindow(WorkspaceArgs),
+	MoveWindowAndFollow(WorkspaceArgs),
+	CloseWindow(NoArgs),
+	Quit(NoArgs),
 }
 
 #[derive(Args)]
-pub struct LaunchArgs {
-	pub backend: String,
+pub struct WorkspaceArgs {
+	pub id: u8,
 }
 
 #[derive(Args)]
-pub struct QuitArgs {}
+pub struct NoArgs {}

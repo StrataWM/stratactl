@@ -18,33 +18,33 @@ fn main() -> anyhow::Result<()> {
 	let mut unix_stream = UnixStream::connect(socket_path).context("Could not create stream")?;
 
 	match &cli.command {
-		Commands::Launch(backend) => {
-			match backend.backend.as_str() {
-				"winit" => {
-					unix_stream
-						.write(b"launch winit")
-						.context("Failed at writing onto the unix stream")?;
-				}
-				"udev" => {
-					unix_stream
-						.write(b"launch udev")
-						.context("Failed at writing onto the unix stream")?;
-				}
-				&_ => {
-					println!(
-						"No backend provided or unknown backend. Please choose one of these: \
-						 \"winit\" / \"udev\""
-					);
-				}
-			}
+		Commands::SwitchToWorkspace(workspace_args) => {
+			let command = format!("workspace switch {}", workspace_args.id);
+			unix_stream
+				.write(command.as_bytes())
+				.context("Failed at writing onto the unix stream")?;
+		}
+		Commands::MoveWindow(args) => {
+			let command = format!("window move {}", args.id);
+			unix_stream
+				.write(command.as_bytes())
+				.context("Failed at writing onto the unix stream")?;
+		}
+		Commands::MoveWindowAndFollow(args) => {
+			let command = format!("window move_and_follow {}", args.id);
+			unix_stream
+				.write(command.as_bytes())
+				.context("Failed at writing onto the unix stream")?;
+		}
+		Commands::CloseWindow(_) => {
+			unix_stream
+				.write("window close".as_bytes())
+				.context("Failed at writing onto the unix stream")?;
 		}
 		Commands::Quit(_) => {
-			println!("Quitting");
-			std::process::Command::new("sh")
-				.arg("-c")
-				.arg("killall stratawm")
-				.output()
-				.expect("failed to execute process");
+			unix_stream
+				.write("quit".as_bytes())
+				.context("Failed at writing onto the unix stream")?;
 		}
 	}
 
